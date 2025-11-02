@@ -79,11 +79,33 @@ class _TrangChuPageState extends State<TrangChuPage> {
 
   Future<void> _loadFavorites() async {
     if (user == null) return;
-    final doc =
-        await FirebaseFirestore.instance.collection('users').doc(user!.uid).get();
-    setState(() {
-      favorites = List<String>.from(doc.data()?['favorites'] ?? []);
-    });
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user!.uid)
+          .get();
+
+      // Defensive: doc.data() may be null or in an unexpected state
+      final data = doc.data();
+
+      // Avoid calling setState if widget was removed while awaiting
+      if (!mounted) return;
+
+      setState(() {
+        favorites = List<String>.from(data?['favorites'] ?? []);
+      });
+    } catch (e, st) {
+      // Log for debugging; avoid throwing so UI doesn't crash
+      // Use debugPrint to avoid using print in production
+      debugPrint('Lỗi khi load favorites: $e');
+      debugPrint('$st');
+      // Optionally show a small non-blocking message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Không thể tải danh sách yêu thích')),
+        );
+      }
+    }
   }
 
   Future<void> _toggleFavorite(String postId) async {
