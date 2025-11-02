@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/services.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'chat_page.dart';
+import 'reviews_page.dart';
 
 class ChiTietPage extends StatefulWidget {
   final String baiDangId;
@@ -296,39 +297,64 @@ class _ChiTietPageState extends State<ChiTietPage> {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        Column(
                           children: [
-                            ElevatedButton.icon(
-                              onPressed: () =>
-                                  _makePhoneCall(data['soDienThoai'] ?? data['phoneNumber'] ?? ''),
-                              icon: const Icon(Icons.phone),
-                              label: const Text('Gọi điện'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green,
-                                foregroundColor: Colors.white,
-                                minimumSize: const Size(140, 45),
-                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                ElevatedButton.icon(
+                                  onPressed: () =>
+                                      _makePhoneCall(data['soDienThoai'] ?? data['phoneNumber'] ?? ''),
+                                  icon: const Icon(Icons.phone),
+                                  label: const Text('Gọi điện'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.green,
+                                    foregroundColor: Colors.white,
+                                    minimumSize: const Size(140, 45),
+                                  ),
+                                ),
+                                ElevatedButton.icon(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ChatPage(
+                                          receiverId: data['userId'] ?? '',
+                                          receiverName: data['userName'] ?? 'Người dùng',
+                                          baiDangId: widget.baiDangId,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  icon: const Icon(Icons.chat_bubble),
+                                  label: const Text('Chat'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.blue,
+                                    foregroundColor: Colors.white,
+                                    minimumSize: const Size(140, 45),
+                                  ),
+                                ),
+                              ],
                             ),
+                            const SizedBox(height: 16),
                             ElevatedButton.icon(
                               onPressed: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => ChatPage(
-                                      receiverId: data['userId'] ?? '',
-                                      receiverName: data['userName'] ?? 'Người dùng',
+                                    builder: (context) => ReviewsPage(
                                       baiDangId: widget.baiDangId,
+                                      baiDangTitle: data['tieuDe'] ?? 'Bài đăng',
                                     ),
                                   ),
                                 );
                               },
-                              icon: const Icon(Icons.chat_bubble),
-                              label: const Text('Chat'),
+                              icon: const Icon(Icons.star),
+                              label: const Text('Xem đánh giá'),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue,
+                                backgroundColor: Colors.amber,
                                 foregroundColor: Colors.white,
-                                minimumSize: const Size(140, 45),
+                                minimumSize: const Size(double.infinity, 45),
                               ),
                             ),
                           ],
